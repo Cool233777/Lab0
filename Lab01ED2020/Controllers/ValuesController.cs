@@ -2,44 +2,59 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lab0ED2.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
-namespace Lab01ED2020.Controllers
+namespace Lab0ED2.Controllers
 {
+
+    //[Route("api/[controller]")]
     [Route("api/[controller]")]
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        public readonly static List<string> movieList = new List<string>();
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public ActionResult<IEnumerable<string>> Mostrar()
         {
-            return new string[] { "value1", "value2" };
+            return new string[] { "PruebaVisual" };
         }
-
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        [HttpPost]       
+        public void Post([FromBody] object movie)
         {
-            return "value";
+            string postMovie = JsonConvert.SerializeObject(movie);
+            movieList.Add(postMovie);            
         }
-
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [Route("MostrarPeliculas")]
+        [HttpGet]
+        public string Get()
         {
-        }
+            string showAll= null;
+            if (movieList.Count < 10)
+            {
+                for (int i = 0; i < movieList.Count; i++)
+                {
+                    var movie = JsonConvert.DeserializeObject<MovieViewModel>(movieList[i]);
+                    var show = "------------------------\n" + "Nombre: " + movie.name + "\n" + "Año: "
+                     + movie.year + "\n" + "Director: " + movie.director + "\n" + "------------------------\n";
+                    showAll += show;
+                }
+            }
+            else
+            {
+                for (int i = movieList.Count-10; i < movieList.Count; i++)
+                {
+                    var movie = JsonConvert.DeserializeObject<MovieViewModel>(movieList[i]);
+                    var show = "------------------------\n" + "Nombre: " + movie.name + "\n" + "Año: "
+                     + movie.year + "\n" + "Director: " + movie.director + "\n" + "------------------------\n";
+                    showAll += show;
+                }
+            }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
 
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            return showAll;
         }
     }
 }
