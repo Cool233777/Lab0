@@ -21,6 +21,7 @@ namespace Lab0ED2.Controllers
         {
             return new string[] { "PruebaVisual" };
         }
+        [Route("MostrarPeliculas")]
         [HttpPost]       
         public void Post([FromBody] object movie)
         {
@@ -32,6 +33,11 @@ namespace Lab0ED2.Controllers
         public string Get()
         {
             string showAll= null;
+            if (movieList.Count == 0)
+            {
+                showAll = "No hay peliculas disponibles\n" + "Ingrese los siguientes campos en Postman:\n" +
+                    "name, year y director";
+            }
             if (movieList.Count < 10)
             {
                 for (int i = 0; i < movieList.Count; i++)
